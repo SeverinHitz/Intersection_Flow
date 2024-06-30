@@ -1,6 +1,3 @@
-from .core import IntersectionTrafficFlow as IntersectionTrafficFlowClass
-
-def IntersectionTrafficFlow(*args, **kwargs):
-    return IntersectionTrafficFlowClass(*args, **kwargs)
+from .core import IntersectionTrafficFlow
 
 __all__ = ['IntersectionTrafficFlow']

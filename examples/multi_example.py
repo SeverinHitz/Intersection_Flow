@@ -1,7 +1,7 @@
 import os
 import random
 import matplotlib.pyplot as plt
-import IntersectionTrafficFlow
+from IntersectionTrafficFlow import IntersectionTrafficFlow
 
 fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(20,20))
 plt.tight_layout()
@@ -16,6 +16,7 @@ itf_1 = IntersectionTrafficFlow(
     cmap_edges_name = None,
     nodes_alpha = 0.7,
     edges_alpha = 0.7,
+    min_edge_width = 1,
     max_edge_width = 15,
     width_road = 3,
     crossbar = False,
@@ -55,7 +56,8 @@ itf_2 = IntersectionTrafficFlow(
     cmap_edges_name = 'viridis',
     nodes_alpha = 1,
     edges_alpha = 0.8,
-    max_edge_width = 10,
+    min_edge_width = 5,
+    max_edge_width = 5,
     width_road = 3,
     crossbar = False,
     width_crossbar = 20,
@@ -95,6 +97,7 @@ itf_3 = IntersectionTrafficFlow(
     cmap_edges_name = None,
     nodes_alpha = 0.7,
     edges_alpha = 0.6,
+    min_edge_width = 1,
     max_edge_width = 15,
     width_road = 3,
     crossbar = True,
@@ -136,6 +139,7 @@ itf_4 = IntersectionTrafficFlow(
     cmap_edges_name = 'RdYlGn',
     nodes_alpha = 0.7,
     edges_alpha = 0.7,
+    min_edge_width = 1,
     max_edge_width = 10,
     width_road = 3,
     crossbar = False,
