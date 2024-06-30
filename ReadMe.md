@@ -57,6 +57,8 @@ itf.plot(ax, od_matrix)
 plt.show()
 ```
 
+![Basic_Example](examples/basic_example.png "Basic Example Intersection")
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.

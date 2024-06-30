@@ -1,3 +1,4 @@
+import os
 import matplotlib.pyplot as plt
 from IntersectionTrafficFlow import IntersectionTrafficFlow
 
@@ -18,7 +19,10 @@ od_matrix = [
 ]
 
 # Setup plot
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(10,10))
 itf.plot(ax, od_matrix)
-plt.show()
-fig.savefig('basic_example.png', dpi=330)
+
+# Save plot
+script_dir = os.path.dirname(__file__)
+output_path = os.path.join(script_dir, 'basic_example.png')
+fig.savefig(output_path, dpi=300)
