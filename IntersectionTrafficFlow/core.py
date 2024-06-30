@@ -249,7 +249,7 @@ class IntersectionTrafficFlow:
                             fontsize=self.font_size_individual_movement, rotation=text_angle_deg, rotation_mode='anchor',
                             horizontalalignment=ha, verticalalignment=va)
             
-    def plot_nodes(self, unique_directions: List[str]) -> None:
+    def plot_nodes(self, od_matrix: List[Tuple[str, str, float]], unique_directions: List[str]) -> None:
         origin_sums, destination_sums = self.sum_values_by_origin_and_destination(od_matrix)
 
         self.roadside_anchors: Dict = {}
