@@ -1,6 +1,6 @@
 import os
 import matplotlib.pyplot as plt
-import IntersectionTrafficFlow
+from IntersectionTrafficFlow import IntersectionTrafficFlow
 
 # Initialize the traffic flow visualization
 itf = IntersectionTrafficFlow()

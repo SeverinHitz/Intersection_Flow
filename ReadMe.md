@@ -35,7 +35,7 @@ Here is a simple example of how to use the IntersectionTrafficFlow to create a t
 
 ```python
 import matplotlib.pyplot as plt
-from IntersectionTrafficFlow
+from IntersectionTrafficFlow import IntersectionTrafficFlow
 
 # Initialize the traffic flow visualization
 itf = IntersectionTrafficFlow()
