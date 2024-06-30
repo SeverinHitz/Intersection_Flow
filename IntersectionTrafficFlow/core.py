@@ -32,6 +32,7 @@ class IntersectionTrafficFlow:
                  cmap_name: str = 'Set2',
                  cmap_edges_center: bool = False,
                  cmap_edges_name: str = None,
+                 colorbar: bool = False,
                  nodes_alpha: float = 0.7,
                  edges_alpha: float = 0.7,
                  min_edge_width: float = 1,
@@ -84,6 +85,7 @@ class IntersectionTrafficFlow:
         self.cmap_name = cmap_name
         self.cmap_edges_center = cmap_edges_center
         self.cmap_edges_name = cmap_edges_name
+        self.colorbar = colorbar
         self.nodes_alpha = nodes_alpha
         self.edges_alpha = edges_alpha
         self.min_edge_width = min_edge_width
@@ -177,10 +179,9 @@ class IntersectionTrafficFlow:
     # Sub Functions
     
     def plot_edges(self, od_matrix: List[Tuple[str, str, float]], unique_directions: List[str]) -> None:
-        edge_width_reduction_factor = self.calculate_edge_width_reduction_factor(od_matrix)
         min_value, max_value = self.calculate_min_max(od_matrix)
         if self.cmap_edges_name is not None:
-            self.edge_cmap = plt.get_cmap(self.cmap_edges_name)
+            edge_cmap = plt.get_cmap(self.cmap_edges_name)
         
         for (origin, destination, value) in od_matrix:
             # Get Coordinates and Angle
@@ -215,7 +216,7 @@ class IntersectionTrafficFlow:
             if self.cmap_edges_name is None:
                 color = self.colors[origin]
             else:
-                color = self.get_cmap_color(value, min_value, max_value)
+                color = self.get_cmap_color(value, min_value, max_value, edge_cmap)
 
             # Edges
             if origin == destination:
@@ -255,6 +256,13 @@ class IntersectionTrafficFlow:
                 self.ax.text(x=origin_x, y=origin_y, s=f'{value}', # Small Text with traffic volume
                             fontsize=self.font_size_individual_movement, rotation=text_angle_deg, rotation_mode='anchor',
                             horizontalalignment=ha, verticalalignment=va)
+                
+        # Colorbar
+        if self.colorbar and self.cmap_edges_name:
+                norm = plt.Normalize(min_value, max_value)
+                sm = plt.cm.ScalarMappable(cmap=edge_cmap, norm=norm)
+                sm.set_array([])
+                cbar = self.ax.figure.colorbar(sm, ax=self.ax, orientation='vertical', shrink=0.5)
             
     def plot_nodes(self, od_matrix: List[Tuple[str, str, float]], unique_directions: List[str]) -> None:
         origin_sums, destination_sums = self.sum_values_by_origin_and_destination(od_matrix)
@@ -405,10 +413,6 @@ class IntersectionTrafficFlow:
             min_value = -max_abs
             max_value = max_abs
         return min_value, max_value
-
-    def calculate_edge_width_reduction_factor(self, od_matrix: List[Tuple[str, str, float]]) -> None:
-        max_value = max(value for _, _, value in od_matrix)
-        return max_value / self.max_edge_width
     
     def get_linewidth(self, value: float, min_value: float, max_value: float) -> int:
         scale = (self.max_edge_width - self.min_edge_width) / (max_value - min_value)
@@ -462,9 +466,9 @@ class IntersectionTrafficFlow:
     
     # Styling Functions
 
-    def get_cmap_color(self, value: float, min_value: int, max_value: int):
+    def get_cmap_color(self, value: float, min_value: int, max_value: int, edge_cmap):
         normalized = (value - min_value) / (max_value - min_value)
-        return self.edge_cmap(normalized)
+        return edge_cmap(normalized)
 
     def customize_plot(self) -> None:
         lim = int(self.radius*1.5)
@@ -480,7 +484,9 @@ if __name__ == '__main__':
     custom_directions = {'High Street': 0, 'Kings Road': 240, 'Park Avenue': 60, 'Main Street': 195, 'Green Lane': 300}
 
     itf = IntersectionTrafficFlow(
-        custom_directions=None)
+        custom_directions=None,
+        colorbar=True,
+        cmap_edges_name='viridis')
     
     fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(12, 15))
     
