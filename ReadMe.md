@@ -33,7 +33,7 @@ Here is a simple example of how to use the IntersectionTrafficFlow to create a t
 
 ```python
 import matplotlib.pyplot as plt
-import IntersectionTrafficFlow
+from IntersectionTrafficFlow import IntersectionTrafficFlow
 
 # Initialize the traffic flow visualization
 itf = IntersectionTrafficFlow()
@@ -41,8 +41,14 @@ itf = IntersectionTrafficFlow()
 # Sample data representing origin, destination, and traffic volume
 od_matrix = [
     ('N', 'E', 500),
-    ('E', 'W', 300),
-    ('S', 'N', 400)
+    ('N', 'SW', 300),
+    ('N', 'N', 50),
+    ('E', 'N', 500),
+    ('E', 'E', 100),
+    ('E', 'SW', 400),
+    ('SW', 'N', 500),
+    ('SW', 'E', 300),
+    ('SW', 'SW', 30)
 ]
 
 # Setup plot
