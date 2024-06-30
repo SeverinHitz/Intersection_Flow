@@ -464,10 +464,10 @@ if __name__ == '__main__':
     
     fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(12, 15))
     
-    directions = ['N', 'S', 'W']
+    '''directions = ['N', 'S', 'W']'''
     '''directions = ['N', 'E', 'S', 'W']'''
     '''directions = ['N', 'NE', 'E', 'S', 'SW', 'NW']'''
-    '''directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']'''
+    directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
     '''directions = list(custom_directions.keys())'''
     for ax in axs.flat:
         max_val = 1000

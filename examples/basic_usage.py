@@ -20,6 +20,7 @@ od_matrix = [
 
 # Setup plot
 fig, ax = plt.subplots(figsize=(10,10))
+plt.tight_layout()
 itf.plot(ax, od_matrix)
 
 # Save plot

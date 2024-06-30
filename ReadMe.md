@@ -8,6 +8,8 @@
 - Ability to define custom directions and associate specific traffic metrics with those directions.
 - Visual representation of traffic using Matplotlib, allowing easy integration with other data visualization tools in Python.
 
+![Multi_Example](examples/multi_example.png "Multi Example Intersection")
+
 ## Installation
 
 ### From GitHub
