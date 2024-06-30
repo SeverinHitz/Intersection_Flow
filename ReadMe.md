@@ -8,9 +8,9 @@
 - Ability to define custom directions and associate specific traffic metrics with those directions.
 - Visual representation of traffic using Matplotlib, allowing easy integration with other data visualization tools in Python.
 
-![Multi_Example](examples/multi_example.png "Multi Example Intersection")
+![Multi_Example](examples/multi_example.png "Multi Example Intersection Flow with Python")
 
-## Installation
+## Install
 
 ### From GitHub
 To install `IntersectionTrafficFlow` directly from GitHub, you can use the following pip command:
@@ -19,7 +19,7 @@ To install `IntersectionTrafficFlow` directly from GitHub, you can use the follo
 pip install git+https://github.com/SeverinHitz/IntersectionTrafficFlow.git
 ```
 
-## Local Installation
+### Local Installation
 
 For local development and testing, you can clone the repository and install the package using:
 
@@ -29,13 +29,13 @@ cd IntersectionTrafficFlow
 pip install .
 ```
 
-## Usage
+## quickstart
 
 Here is a simple example of how to use the IntersectionTrafficFlow to create a traffic flow visualization:
 
 ```python
 import matplotlib.pyplot as plt
-from IntersectionTrafficFlow import IntersectionTrafficFlow
+from IntersectionTrafficFlow
 
 # Initialize the traffic flow visualization
 itf = IntersectionTrafficFlow()

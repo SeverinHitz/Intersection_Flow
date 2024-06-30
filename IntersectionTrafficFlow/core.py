@@ -33,6 +33,7 @@ class IntersectionTrafficFlow:
                  cmap_edges_name: str = None,
                  nodes_alpha: float = 0.7,
                  edges_alpha: float = 0.7,
+                 min_edge_width: float = 1,
                  max_edge_width: float = 15,
                  width_road: float = 3,
                  crossbar: bool = False,
@@ -82,6 +83,7 @@ class IntersectionTrafficFlow:
         self.cmap_edges_name = cmap_edges_name
         self.nodes_alpha = nodes_alpha
         self.edges_alpha = edges_alpha
+        self.min_edge_width = min_edge_width
         self.max_edge_width = max_edge_width
         self.width_road = width_road
         self.crossbar = crossbar
@@ -173,8 +175,8 @@ class IntersectionTrafficFlow:
     
     def plot_edges(self, od_matrix: List[Tuple[str, str, float]], unique_directions: List[str]) -> None:
         edge_width_reduction_factor = self.calculate_edge_width_reduction_factor(od_matrix)
+        min_value, max_value = self.calculate_min_max(od_matrix)
         if self.cmap_edges_name is not None:
-            self.min_value, self.max_value = self.calculate_min_max(od_matrix)
             self.edge_cmap = plt.get_cmap(self.cmap_edges_name)
         
         for (origin, destination, value) in od_matrix:
@@ -202,13 +204,15 @@ class IntersectionTrafficFlow:
             # Get angle for curved Line
             angleA = self.get_connection_angles(origin)
             angleB = self.get_connection_angles(destination)
-            linewidth = value / edge_width_reduction_factor
+
+            # Linewidth
+            linewidth = self.get_linewidth(value, min_value, max_value)
 
             # Colors
             if self.cmap_edges_name is None:
                 color = self.colors[origin]
             else:
-                color = self.get_cmap_color(value)
+                color = self.get_cmap_color(value, min_value, max_value)
 
             # Edges
             if origin == destination:
@@ -398,6 +402,11 @@ class IntersectionTrafficFlow:
     def calculate_edge_width_reduction_factor(self, od_matrix: List[Tuple[str, str, float]]) -> None:
         max_value = max(value for _, _, value in od_matrix)
         return max_value / self.max_edge_width
+    
+    def get_linewidth(self, value: float, min_value: float, max_value: float) -> int:
+        scale = (self.max_edge_width - self.min_edge_width) / (max_value - min_value)
+        return self.min_edge_width + (value - min_value) * scale
+
         
     def calculate_angle(self, key: str) -> float:
         return np.deg2rad(self.cartesian_angles[key]-90)
@@ -442,8 +451,8 @@ class IntersectionTrafficFlow:
     
     # Styling Functions
 
-    def get_cmap_color(self, value):
-        normalized = (value - self.min_value) / (self.max_value - self.min_value)
+    def get_cmap_color(self, value: float, min_value: int, max_value: int):
+        normalized = (value - min_value) / (max_value - min_value)
         return self.edge_cmap(normalized)
 
     def customize_plot(self) -> None:

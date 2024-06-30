@@ -1,7 +1,7 @@
 import os
 import random
 import matplotlib.pyplot as plt
-from IntersectionTrafficFlow import IntersectionTrafficFlow
+import IntersectionTrafficFlow
 
 fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(20,20))
 plt.tight_layout()
@@ -40,7 +40,7 @@ od_matrix = []
 for origin in directions_1:
     for destination in directions_1:
         if origin == destination:
-            od_matrix.append((origin, destination, random.randint(min_val, max_val/10)))
+            od_matrix.append((origin, destination, random.randint(min_val, max_val/5)))
         else:
             od_matrix.append((origin, destination, random.randint(min_val, max_val)))
 
@@ -79,7 +79,7 @@ od_matrix = []
 for origin in directions_2:
     for destination in directions_2:
         if origin == destination:
-            od_matrix.append((origin, destination, random.randint(min_val, max_val/10)))
+            od_matrix.append((origin, destination, random.randint(min_val, max_val/5)))
         else:
             od_matrix.append((origin, destination, random.randint(min_val, max_val)))
 
@@ -100,7 +100,7 @@ itf_3 = IntersectionTrafficFlow(
     crossbar = True,
     width_crossbar = 20,
     exit_arrow = False,
-    centerline = True,
+    centerline = False,
     roadside = False,
     text_offset = 3,
     direction_text = True,
@@ -119,7 +119,7 @@ od_matrix = []
 for origin in directions_3:
     for destination in directions_3:
         if origin == destination:
-            od_matrix.append((origin, destination, random.randint(min_val, max_val/10)))
+            od_matrix.append((origin, destination, random.randint(min_val, max_val/5)))
         else:
             od_matrix.append((origin, destination, random.randint(min_val, max_val)))
 
@@ -127,7 +127,7 @@ itf_3.plot(axs.flat[2], od_matrix)
 
 
 # Fourth Intersection
-custom_4 = {'Sunset Boulevard': 330, 'River Road': 75, 'Orchard Lane': 150, 'Cedar Avenue': 210, 'Maple Street': 285}
+custom_4 = {'Sunset Boulevard': 0, 'River Road': 90, 'Orchard Lane': 180, 'Cedar Avenue': 270}
 itf_4 = IntersectionTrafficFlow(
     radius = 10,
     custom_directions = custom_4,
@@ -136,7 +136,7 @@ itf_4 = IntersectionTrafficFlow(
     cmap_edges_name = 'RdYlGn',
     nodes_alpha = 0.7,
     edges_alpha = 0.7,
-    max_edge_width = 15,
+    max_edge_width = 10,
     width_road = 3,
     crossbar = False,
     width_crossbar = 20,
@@ -154,13 +154,13 @@ itf_4 = IntersectionTrafficFlow(
 
 directions_4 = list(custom_4.keys())
 
-max_val = 1000
-min_val = -1000
+max_val = 100
+min_val = -100
 od_matrix = []
 for origin in directions_4:
     for destination in directions_4:
         if origin == destination:
-            od_matrix.append((origin, destination, random.randint(min_val/10, max_val/10)))
+            od_matrix.append((origin, destination, random.randint(min_val/5, max_val/5)))
         else:
             od_matrix.append((origin, destination, random.randint(min_val, max_val)))
 
