@@ -164,7 +164,7 @@ class IntersectionTrafficFlow:
 
         self.plot_edges(od_matrix, unique_directions)
         
-        self.plot_nodes(unique_directions)
+        self.plot_nodes(od_matrix, unique_directions)
 
         self.customize_plot()
         return self.ax
