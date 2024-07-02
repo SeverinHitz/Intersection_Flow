@@ -6,7 +6,7 @@ setup(
     description="Visualize traffic flow at intersections",
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
-    author="Severin Hizt",
+    author="Severin Hitz",
     author_email="sevihitz@gmail.com",
     url="https://github.com/SeverinHitz/IntersectionTrafficFlow",
     packages=find_packages(),
