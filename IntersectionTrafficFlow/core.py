@@ -30,6 +30,7 @@ class IntersectionTrafficFlow:
                  custom_directions: Dict[str, int] = None,
                  left_hand_traffic: bool = False,
                  cmap_name: str = 'Set2',
+                 cmap_edges_center: bool = False,
                  cmap_edges_name: str = None,
                  nodes_alpha: float = 0.7,
                  edges_alpha: float = 0.7,
@@ -80,6 +81,7 @@ class IntersectionTrafficFlow:
         self.compass_direction_angles = custom_directions if custom_directions is not None else self.standard_compass_direction_angles
         self._left_hand_traffic = left_hand_traffic
         self.cmap_name = cmap_name
+        self.cmap_edges_center = cmap_edges_center
         self.cmap_edges_name = cmap_edges_name
         self.nodes_alpha = nodes_alpha
         self.edges_alpha = edges_alpha
@@ -397,6 +399,10 @@ class IntersectionTrafficFlow:
         values = [value for _, _, value in od_matrix]
         min_value = min(values)
         max_value = max(values)
+        if self.cmap_edges_center:
+            max_abs = max(abs(min_value), abs(max_value))
+            min_value = -max_abs
+            max_value = max_abs
         return min_value, max_value
 
     def calculate_edge_width_reduction_factor(self, od_matrix: List[Tuple[str, str, float]]) -> None:
@@ -405,7 +411,11 @@ class IntersectionTrafficFlow:
     
     def get_linewidth(self, value: float, min_value: float, max_value: float) -> int:
         scale = (self.max_edge_width - self.min_edge_width) / (max_value - min_value)
-        return self.min_edge_width + (value - min_value) * scale
+        if self.cmap_edges_center:
+            edge_width = self.min_edge_width + (abs(value) - min_value) * scale
+        else:
+            edge_width = self.min_edge_width + (value - min_value) * scale
+        return edge_width
 
         
     def calculate_angle(self, key: str) -> float:
