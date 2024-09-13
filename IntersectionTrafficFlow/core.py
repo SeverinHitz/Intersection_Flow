@@ -57,6 +57,7 @@ class IntersectionTrafficFlow:
         - custom_directions (Dict[str, int], optional): Custom mapping of directions to angles.
         - left_hand_traffic (bool): Flag to set if traffic flows on the left.
         - cmap_name (str): Name of the Matplotlib colormap for node colors.
+        - cmap_edges_center (bool): Centers cmap at zero for diverging cmaps.
         - cmap_edges_name (str, optional): Name of the colormap for edge colors.
         - nodes_alpha (float): Alpha transparency for nodes.
         - edges_alpha (float): Alpha transparency for edges.
