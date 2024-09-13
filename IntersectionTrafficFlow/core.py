@@ -60,6 +60,7 @@ class IntersectionTrafficFlow:
         - cmap_name (str): Name of the Matplotlib colormap for node colors.
         - cmap_edges_center (bool): Centers cmap at zero for diverging cmaps.
         - cmap_edges_name (str, optional): Name of the colormap for edge colors.
+        - colorbar (bool): Flag to enable colorbar.
         - nodes_alpha (float): Alpha transparency for nodes.
         - edges_alpha (float): Alpha transparency for edges.
         - max_edge_width (float): Maximum width for edges.
