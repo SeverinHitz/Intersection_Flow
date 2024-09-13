@@ -487,7 +487,8 @@ if __name__ == '__main__':
     itf = IntersectionTrafficFlow(
         custom_directions=custom_directions,
         colorbar=True,
-        cmap_edges_name='viridis')
+        cmap_edges_center=True,
+        cmap_edges_name='RdYlGn')
     
     fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(12, 15))
     
@@ -498,7 +499,7 @@ if __name__ == '__main__':
     directions = list(custom_directions.keys())
     for ax in axs.flat:
         max_val = 1000
-        min_val = 0
+        min_val = -1000
         od_matrix = []
         for origin in directions:
             for destination in directions:
