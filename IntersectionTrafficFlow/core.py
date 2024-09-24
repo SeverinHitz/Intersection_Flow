@@ -30,6 +30,7 @@ class IntersectionTrafficFlow:
                  custom_directions: Dict[str, int] = None,
                  left_hand_traffic: bool = False,
                  cmap_name: str = 'Set2',
+                 cmap_edges_center: bool = False,
                  cmap_edges_name: str = None,
                  colorbar: bool = False,
                  nodes_alpha: float = 0.7,
@@ -57,7 +58,9 @@ class IntersectionTrafficFlow:
         - custom_directions (Dict[str, int], optional): Custom mapping of directions to angles.
         - left_hand_traffic (bool): Flag to set if traffic flows on the left.
         - cmap_name (str): Name of the Matplotlib colormap for node colors.
+        - cmap_edges_center (bool): Centers cmap at zero for diverging cmaps.
         - cmap_edges_name (str, optional): Name of the colormap for edge colors.
+        - colorbar (bool): Flag to enable colorbar.
         - nodes_alpha (float): Alpha transparency for nodes.
         - edges_alpha (float): Alpha transparency for edges.
         - max_edge_width (float): Maximum width for edges.
@@ -81,6 +84,7 @@ class IntersectionTrafficFlow:
         self.compass_direction_angles = custom_directions if custom_directions is not None else self.standard_compass_direction_angles
         self._left_hand_traffic = left_hand_traffic
         self.cmap_name = cmap_name
+        self.cmap_edges_center = cmap_edges_center
         self.cmap_edges_name = cmap_edges_name
         self.colorbar = colorbar
         self.nodes_alpha = nodes_alpha
@@ -102,10 +106,10 @@ class IntersectionTrafficFlow:
         self.font_size_individual_movement = font_size_individual_movement
 
         # Initialization
-        self.cartesian_angles = self.calculate_cartesian_angles()
-        self.directions = self.calculate_direction_point()
-        self.ordered_directions = self.order_directions()
-        self.colors = self.generate_colors()
+        self.cartesian_angles = self._calculate_cartesian_angles()
+        self.directions = self._calculate_direction_point()
+        self.ordered_directions = self._order_directions()
+        self.colors = self._generate_colors()
 
         # Traffic Settings
         self._left_hand_traffic = left_hand_traffic
@@ -120,7 +124,7 @@ class IntersectionTrafficFlow:
         self._left_hand_traffic = value
         self.driving_side_factor = -1 if value else 1
 
-    def generate_colors(self):
+    def _generate_colors(self):
         try:
             cmap = plt.get_cmap(self.cmap_name)
             return {direction: cmap(i / len(self.directions)) for i, direction in enumerate(self.directions)}
@@ -130,16 +134,16 @@ class IntersectionTrafficFlow:
             else:
                 raise ValueError(f'{self.cmap_name} not in Matplotlibs cmap or colors')
 
-    def calculate_cartesian_angles(self) -> Dict[str, float]:
+    def _calculate_cartesian_angles(self) -> Dict[str, float]:
         return {direction: (450 - angle) % 360 for direction, angle in self.compass_direction_angles.items()}
 
-    def calculate_direction_point(self):
-        angles_rad = np.deg2rad(list(self.calculate_cartesian_angles().values()))
+    def _calculate_direction_point(self):
+        angles_rad = np.deg2rad(list(self._calculate_cartesian_angles().values()))
         x_coords = self.radius * np.cos(angles_rad)
         y_coords = self.radius * np.sin(angles_rad)
         return {direction: Point(x, y) for direction, (x, y) in zip(self.compass_direction_angles.keys(), zip(x_coords, y_coords))}
     
-    def order_directions(self):
+    def _order_directions(self):
         return [key for key, _ in sorted(self.compass_direction_angles.items(), key=lambda item: item[1])]
     
     # Main Functions
@@ -162,21 +166,21 @@ class IntersectionTrafficFlow:
         
         self.ax = ax
 
-        od_matrix = self.sort_od_matrix(od_matrix)
+        od_matrix = self._sort_od_matrix(od_matrix)
 
-        unique_directions = self.get_unique_directions(od_matrix)
+        unique_directions = self._get_unique_directions(od_matrix)
 
-        self.plot_edges(od_matrix, unique_directions)
+        self._plot_edges(od_matrix, unique_directions)
         
-        self.plot_nodes(od_matrix, unique_directions)
+        self._plot_nodes(od_matrix, unique_directions)
 
-        self.customize_plot()
+        self._customize_plot()
         return self.ax
     
     # Sub Functions
     
-    def plot_edges(self, od_matrix: List[Tuple[str, str, float]], unique_directions: List[str]) -> None:
-        min_value, max_value = self.calculate_min_max(od_matrix)
+    def _plot_edges(self, od_matrix: List[Tuple[str, str, float]], unique_directions: List[str]) -> None:
+        min_value, max_value = self._calculate_min_max(od_matrix)
         if self.cmap_edges_name is not None:
             edge_cmap = plt.get_cmap(self.cmap_edges_name)
         
@@ -184,11 +188,11 @@ class IntersectionTrafficFlow:
             # Get Coordinates and Angle
             origin_point = self.directions[origin]
             destination_point = self.directions[destination]
-            origin_angle = self.calculate_angle(origin)
-            destination_angle = self.calculate_angle(destination)
+            origin_angle = self._calculate_angle(origin)
+            destination_angle = self._calculate_angle(destination)
 
             # Calculate Distance for Sequence of Edges along node bar
-            circular_distance = self.calculate_circular_distance(unique_directions, origin, destination)+1
+            circular_distance = self._calculate_circular_distance(unique_directions, origin, destination)+1
 
             # Calculate Offsets along node bar
             origin_offset = circular_distance/(len(unique_directions)+1) * self.width_road
@@ -203,17 +207,17 @@ class IntersectionTrafficFlow:
             destination_y = destination_point.y + destination_delta_y
 
             # Get angle for curved Line
-            angleA = self.get_connection_angles(origin)
-            angleB = self.get_connection_angles(destination)
+            angleA = self._get_connection_angles(origin)
+            angleB = self._get_connection_angles(destination)
 
             # Linewidth
-            linewidth = self.get_linewidth(value, min_value, max_value)
+            linewidth = self._get_linewidth(value, min_value, max_value)
 
             # Colors
             if self.cmap_edges_name is None:
                 color = self.colors[origin]
             else:
-                color = self.get_cmap_color(value, min_value, max_value, edge_cmap)
+                color = self._get_cmap_color(value, min_value, max_value, edge_cmap)
 
             # Edges
             if origin == destination:
@@ -261,14 +265,14 @@ class IntersectionTrafficFlow:
                 sm.set_array([])
                 cbar = self.ax.figure.colorbar(sm, ax=self.ax, orientation='vertical', shrink=0.5)
             
-    def plot_nodes(self, od_matrix: List[Tuple[str, str, float]], unique_directions: List[str]) -> None:
-        origin_sums, destination_sums = self.sum_values_by_origin_and_destination(od_matrix)
+    def _plot_nodes(self, od_matrix: List[Tuple[str, str, float]], unique_directions: List[str]) -> None:
+        origin_sums, destination_sums = self._sum_values_by_origin_and_destination(od_matrix)
 
         self.roadside_anchors: Dict = {}
         for key in unique_directions:
             # Get Coordinates and Angle
             point = self.directions[key]
-            angle = self.calculate_angle(key)
+            angle = self._calculate_angle(key)
             angle_deg = np.rad2deg(angle)
 
             # Crossbar
@@ -326,7 +330,7 @@ class IntersectionTrafficFlow:
             if self.roadside:
                 right_side_anchor = Point(point.x - road_delta_x, point.y - road_delta_y)
                 left_side_anchor = Point(point.x + road_delta_x, point.y + road_delta_y)
-                connection_angle = self.get_connection_angles(key)
+                connection_angle = self._get_connection_angles(key)
                 self.roadside_anchors[key] = {'right': (right_side_anchor, connection_angle), 'left': (left_side_anchor, connection_angle)}
 
             # Sum of Movment
@@ -377,7 +381,7 @@ class IntersectionTrafficFlow:
                
     # Helper Functions
     
-    def get_unique_directions(self, od_matrix: List[Tuple[str, str, int]]) -> List[str]:
+    def _get_unique_directions(self, od_matrix: List[Tuple[str, str, int]]) -> List[str]:
         unique_directions_dict = OrderedDict()
         for origin, destination, _ in od_matrix:
             unique_directions_dict[origin] = None
@@ -386,7 +390,7 @@ class IntersectionTrafficFlow:
         unique_directions = list(unique_directions_dict.keys())
         return unique_directions
     
-    def sort_od_matrix(self, od_matrix: List[Tuple[str, str, int]]) -> List[Tuple[str, str, int]]:
+    def _sort_od_matrix(self, od_matrix: List[Tuple[str, str, int]]) -> List[Tuple[str, str, int]]:
         directions = set()
         for origin, destination, _ in od_matrix:
             directions.add(origin)
@@ -401,25 +405,33 @@ class IntersectionTrafficFlow:
         direction_index = {direction: index for index, direction in enumerate(self.ordered_directions)}
         return sorted(completed_od_matrix, key=lambda x: (direction_index[x[0]], direction_index[x[1]]))
 
-    def calculate_min_max(self, od_matrix: List[Tuple[str, str, int]]) -> List[Tuple[float, float]]:
+    def _calculate_min_max(self, od_matrix: List[Tuple[str, str, int]]) -> List[Tuple[float, float]]:
         values = [value for _, _, value in od_matrix]
         min_value = min(values)
         max_value = max(values)
+        if self.cmap_edges_center:
+            max_abs = max(abs(min_value), abs(max_value))
+            min_value = -max_abs
+            max_value = max_abs
         return min_value, max_value
     
-    def get_linewidth(self, value: float, min_value: float, max_value: float) -> int:
+    def _get_linewidth(self, value: float, min_value: float, max_value: float) -> int:
         scale = (self.max_edge_width - self.min_edge_width) / (max_value - min_value)
-        return self.min_edge_width + (value - min_value) * scale
+        if self.cmap_edges_center:
+            edge_width = self.min_edge_width + (abs(value) - min_value) * scale
+        else:
+            edge_width = self.min_edge_width + (value - min_value) * scale
+        return edge_width
 
         
-    def calculate_angle(self, key: str) -> float:
+    def _calculate_angle(self, key: str) -> float:
         return np.deg2rad(self.cartesian_angles[key]-90)
 
-    def get_connection_angles(self, key: str) -> int:
+    def _get_connection_angles(self, key: str) -> int:
         angle = self.cartesian_angles[key]
         return angle
 
-    def calculate_circular_distance(self, directions: List[str], origin: str, destination: str):
+    def _calculate_circular_distance(self, directions: List[str], origin: str, destination: str):
         start_index = directions.index(origin)
         end_index = directions.index(destination)
         
@@ -436,7 +448,7 @@ class IntersectionTrafficFlow:
         
         return distance 
 
-    def sum_values_by_origin_and_destination(self, od_matrix: List[Tuple[str, str, int]]) -> Tuple[Dict[str, int], Dict[str, int]]:
+    def _sum_values_by_origin_and_destination(self, od_matrix: List[Tuple[str, str, int]]) -> Tuple[Dict[str, int], Dict[str, int]]:
         origin_sums = {}
         destination_sums = {}
         
@@ -455,11 +467,11 @@ class IntersectionTrafficFlow:
     
     # Styling Functions
 
-    def get_cmap_color(self, value: float, min_value: int, max_value: int, edge_cmap):
+    def _get_cmap_color(self, value: float, min_value: int, max_value: int, edge_cmap):
         normalized = (value - min_value) / (max_value - min_value)
         return edge_cmap(normalized)
 
-    def customize_plot(self) -> None:
+    def _customize_plot(self) -> None:
         lim = int(self.radius*1.5)
         self.ax.set_xlim([-lim, lim])
         self.ax.set_ylim([-lim, lim])
@@ -473,20 +485,21 @@ if __name__ == '__main__':
     custom_directions = {'High Street': 0, 'Kings Road': 240, 'Park Avenue': 60, 'Main Street': 195, 'Green Lane': 300}
 
     itf = IntersectionTrafficFlow(
-        custom_directions=None,
+        custom_directions=custom_directions,
         colorbar=True,
-        cmap_edges_name='viridis')
+        cmap_edges_center=True,
+        cmap_edges_name='RdYlGn')
     
     fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(12, 15))
     
     '''directions = ['N', 'S', 'W']'''
     '''directions = ['N', 'E', 'S', 'W']'''
     '''directions = ['N', 'NE', 'E', 'S', 'SW', 'NW']'''
-    directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
-    '''directions = list(custom_directions.keys())'''
+    '''directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']'''
+    directions = list(custom_directions.keys())
     for ax in axs.flat:
         max_val = 1000
-        min_val = 0
+        min_val = -1000
         od_matrix = []
         for origin in directions:
             for destination in directions:
